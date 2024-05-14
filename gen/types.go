@@ -5,6 +5,12 @@ import (
 	"github.com/automata-network/goasn/gen/gen_embed"
 )
 
+var GEN_AS_NAME = gen_embed.GEN_AS_NAME
+
+var GEN_REGION = gen_embed.GEN_REGION
+
+var GEN_CIDR_NAME = gen_embed.GEN_CIDR_NAME
+
 var CIDR_META = embed.ExtractStructs[CidrMeta](gen_embed.GEN_CIDR_META)
 
 var AS_META = embed.ExtractStructs[AsMeta](gen_embed.GEN_AS_META)
