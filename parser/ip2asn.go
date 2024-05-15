@@ -75,7 +75,7 @@ func ParseIP2asn(fp string) ([]*AsInfo, error) {
 			panic("invalid asno")
 		}
 		asRegion := strings.TrimSpace(string(sp[3]))
-		asName := strings.TrimSpace(string(sp[4]))
+		asName := strings.ToLower(strings.TrimSpace(string(sp[4])))
 
 		infos = append(infos, &AsInfo{
 			Start: start, End: end, ASN: asNo, Region: asRegion, Name: asName,
