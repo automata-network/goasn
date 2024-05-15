@@ -3,6 +3,7 @@ package types
 import (
 	"fmt"
 	"net"
+	"unsafe"
 
 	"github.com/automata-network/goasn/embed"
 	"github.com/automata-network/goasn/gen"
@@ -27,6 +28,10 @@ func (a AsInfo) Region() string {
 
 type CidrInfo struct {
 	meta *gen.CidrMeta
+}
+
+func (c CidrInfo) ID() uintptr {
+	return uintptr(unsafe.Pointer(c.meta))
 }
 
 func (c CidrInfo) GetArg(name string) interface{} {
@@ -67,6 +72,11 @@ func NewCidrInfo(meta *gen.CidrMeta) CidrInfo {
 	return CidrInfo{meta}
 }
 
+func NewCidrInfoByID(id uintptr) CidrInfo {
+	meta := (*gen.CidrMeta)(unsafe.Pointer(id))
+	return CidrInfo{meta}
+}
+
 func (c CidrInfo) Meta() *gen.CidrMeta {
 	return c.meta
 }
@@ -93,16 +103,25 @@ func (c CidrInfo) Asn() int {
 
 func (c CidrInfo) AsName() string {
 	ass := gen.AS_META_MAP[c.meta.ASN]
+	if len(ass) == 0 {
+		return "UNKNOWN"
+	}
 	info := AsInfo{ass[0]}
 	return info.Name()
 }
 
 func (c CidrInfo) AsRegion() string {
 	ass := gen.AS_META_MAP[c.meta.ASN]
+	if len(ass) == 0 {
+		return "UNKNOWN"
+	}
 	info := AsInfo{ass[0]}
 	return info.Region()
 }
 
 func (c CidrInfo) String() string {
+	if c.meta == nil {
+		return "CidrInfo{nil}"
+	}
 	return fmt.Sprintf("CidrInfo{Cidr: %v, ASN: %v, Name: %q}", c.Cidr(), c.Asn(), c.Name())
 }

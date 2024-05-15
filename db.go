@@ -10,8 +10,16 @@ import (
 	"github.com/automata-network/goasn/utils"
 )
 
+func GenerateAllCidrInfo() []types.CidrInfo {
+	out := make([]types.CidrInfo, len(gen.CIDR_META))
+	for idx, meta := range gen.CIDR_META {
+		out[idx] = types.NewCidrInfo(meta)
+	}
+	return out
+}
+
 func SearchCidr(ip net.IP) (types.CidrInfo, bool) {
-	meta, ok := utils.FindIpInfo(gen.CIDR_META, ip)
+	meta, ok := utils.FindIpInfo(gen.CIDR_META, ip.To4())
 	if !ok {
 		return types.NewCidrInfo(nil), false
 	}

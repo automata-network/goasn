@@ -10,6 +10,9 @@ import (
 )
 
 func IP2Int(ip net.IP) uint32 {
+	if len(ip) < 4 {
+		return 0
+	}
 	return binary.BigEndian.Uint32([]byte(ip))
 }
 
