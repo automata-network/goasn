@@ -11,9 +11,10 @@ import (
 )
 
 type GenerateHandler struct {
-	Format string
-	Filter string
-	Invert bool `name:"v"`
+	Format     string
+	Filter     string
+	FilterFile string
+	Invert     bool `name:"v"`
 }
 
 func (g *GenerateHandler) FlaglyHandle() error {
@@ -22,6 +23,13 @@ func (g *GenerateHandler) FlaglyHandle() error {
 		for _, item := range strings.Split(g.Filter, ";") {
 			filters = append(filters, strings.TrimSpace(item))
 		}
+	}
+	if g.FilterFile != "" {
+		data, err := os.ReadFile(g.FilterFile)
+		if err != nil {
+			return logex.Trace(err)
+		}
+		filters = strings.Split(string(data), "\n")
 	}
 
 	rules := goasn.ParseRules(filters)
@@ -38,6 +46,7 @@ func (g *GenerateHandler) FlaglyHandle() error {
 	if err != nil {
 		return logex.Trace(err)
 	}
+	total := 0
 	for _, info := range cidrCol.Cnts {
 		if len(ruleCidrs) > 0 {
 			isExist := false
@@ -54,8 +63,10 @@ func (g *GenerateHandler) FlaglyHandle() error {
 				continue
 			}
 		}
+		total += info.Cnt
 		fmt.Println(fi.Format(info))
 	}
+	fmt.Println("total:", total)
 
 	return nil
 }
